@@ -1,0 +1,769 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Noto Sans KR",
+    sans-serif;
+
+  background: #f4f6f8;
+  color: #222;
+  min-height: 100vh;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+.container {
+  width: min(900px, 92%);
+  margin: 0 auto;
+  padding: 40px 0 30px;
+}
+
+/* 헤더 */
+
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+header h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+header p {
+  color: #777;
+  font-size: 15px;
+}
+
+/* 카드 */
+
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+  margin-bottom: 25px;
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-title h2 {
+  font-size: 20px;
+}
+
+#studentCount {
+  font-size: 14px;
+  color: #777;
+}
+
+/* 학생 입력 */
+
+.student-inputs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.student-input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.student-input:focus {
+  border-color: #333;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.sub-btn {
+  border: none;
+  background: #f0f1f3;
+  padding: 11px 15px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.sub-btn:hover {
+  background: #e4e5e7;
+}
+
+.sub-btn.danger {
+  color: #d33;
+}
+
+/* 랜덤 버튼 */
+
+.draw-section {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.draw-btn {
+  width: 100%;
+  border: none;
+  border-radius: 15px;
+  padding: 18px;
+  background: #222;
+  color: white;
+  font-size: 19px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.draw-btn:hover {
+  transform: translateY(-2px);
+  background: #111;
+}
+
+.draw-btn:active {
+  transform: scale(0.98);
+}
+
+.draw-btn.drawing {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.draw-message {
+  margin-top: 12px;
+  color: #777;
+  font-size: 14px;
+}
+
+/* 결과 */
+
+.result-section {
+  background: white;
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+}
+
+.result-section > h2 {
+  font-size: 21px;
+  margin-bottom: 20px;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+/* 업무 카드 */
+
+.job-card {
+  border-radius: 15px;
+  padding: 20px;
+  position: relative;
+  min-height: 190px;
+  border: 1px solid #eee;
+  background: #fafafa;
+}
+
+.job-icon {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+.job-card h3 {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.job-count {
+  display: inline-block;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 15px;
+}
+
+.student-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.student {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* 카드별 살짝 다른 배경 */
+
+.desk {
+  background: #f8f5ed;
+}
+
+.sweep {
+  background: #eef7f0;
+}
+
+.mop {
+  background: #eef5fa;
+}
+
+.wash {
+  background: #f5eff9;
+}
+
+/* 결과 초기화 */
+
+.reset-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 13px;
+  border: none;
+  border-radius: 10px;
+  background: #f0f1f3;
+  color: #555;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.reset-btn:hover {
+  background: #e5e6e8;
+}
+
+/* 애니메이션 */
+
+.student.animate {
+  animation: pop 0.35s ease;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+
+  70% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 푸터 */
+
+footer {
+  text-align: center;
+  color: #aaa;
+  font-size: 12px;
+  margin-top: 25px;
+}
+
+/* 모바일 */
+
+@media (max-width: 600px) {
+
+  .container {
+    width: 94%;
+    padding-top: 25px;
+  }
+
+  header h1 {
+    font-size: 27px;
+  }
+
+  header p {
+    font-size: 13px;
+  }
+
+  .card,
+  .result-section {
+    padding: 18px;
+    border-radius: 15px;
+  }
+
+  .student-inputs {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .student-input {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .draw-btn {
+    font-size: 17px;
+    padding: 16px;
+  }
+}
+
+.result-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.confirm-btn {
+  flex: 1;
+  padding: 13px;
+  border: none;
+  border-radius: 10px;
+  background: #222;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.confirm-btn:hover {
+  background: #111;
+}
+
+.confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.reset-btn {
+  flex: 1;
+  margin-top: 0;
+}
+
+.section-title > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-btn {
+  border: none;
+  background: #f0f1f3;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.toggle-btn:hover {
+  background: #e4e5e7;
+}
+
+.exclude-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.exclude-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.exclude-title h3 {
+  font-size: 15px;
+  margin-bottom: 3px;
+}
+
+.exclude-title p {
+  font-size: 12px;
+  color: #999;
+}
+
+#excludeCount {
+  font-size: 13px;
+  color: #d33;
+}
+
+.exclude-inputs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.exclude-input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #e2e2e2;
+  border-radius: 9px;
+  outline: none;
+  font-size: 14px;
+  background: #fffafa;
+}
+
+.exclude-input:focus {
+  border-color: #d33;
+  box-shadow: 0 0 0 3px rgba(211, 51, 51, 0.06);
+}
+
+@media (max-width: 600px) {
+
+  .exclude-inputs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+/* ============================= */
+/* 청소 통계 */
+/* ============================= */
+
+.stats-section {
+  margin-top: 25px;
+}
+
+.section-description {
+  color: #999;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.stats-content {
+  margin-top: 20px;
+}
+
+.stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #f7f7f8;
+  border-radius: 10px;
+}
+
+.stat-name {
+  width: 70px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.stat-bar-container {
+  flex: 1;
+  height: 8px;
+  background: #e5e5e5;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.stat-bar {
+  height: 100%;
+  background: #222;
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.stat-percent {
+  width: 50px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.stat-total {
+  width: 55px;
+  text-align: right;
+  font-size: 12px;
+  color: #888;
+}
+
+@media (max-width: 600px) {
+
+  .stat-name {
+    width: 55px;
+  }
+
+  .stat-total {
+    width: 45px;
+  }
+
+}
+
+/* ==========================================
+   모바일 최적화
+========================================== */
+
+@media (max-width: 600px) {
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  /* 전체 컨테이너 */
+  .container,
+  main,
+  #app {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  /* 제목 */
+  h1 {
+    font-size: 24px;
+    line-height: 1.3;
+    margin: 10px 0 18px;
+  }
+
+  h2 {
+    font-size: 19px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  /* 카드 */
+  .card,
+  section {
+    width: 100%;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+  }
+
+  /* 버튼 */
+  button {
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 9px;
+    cursor: pointer;
+  }
+
+  /* 학생 입력 영역 */
+  #studentInputs {
+    width: 100%;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .student-input {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 9px 10px;
+    font-size: 14px;
+  }
+
+  /* 학생 수 + 버튼 */
+  #studentCount {
+    font-size: 13px;
+  }
+
+  #addStudentBtn,
+  #saveStudentsBtn,
+  #clearStudentsBtn {
+    width: 100%;
+    margin-top: 6px;
+  }
+
+  /* 학생 명단 접기 버튼 */
+  #toggleStudentsBtn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  /* 제외 학생 */
+  #excludeInputs {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .exclude-input {
+    width: 100%;
+    height: 42px;
+    padding: 9px 10px;
+    font-size: 14px;
+  }
+
+  #addExcludeBtn {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  /* 랜덤 배정 버튼 */
+  #drawBtn {
+    width: 100%;
+    min-height: 52px;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+
+  /* 결과 영역 */
+  #deskResult,
+  #sweepResult,
+  #mopResult,
+  #washResult {
+    width: 100%;
+  }
+
+  .student {
+    width: 100%;
+    min-height: 38px;
+    padding: 8px 10px;
+    margin: 4px 0;
+    font-size: 14px;
+  }
+
+  /* 청소 업무 결과가 가로로 나오는 경우 */
+  .results,
+  .result-container,
+  .job-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* 배정 확정 / 결과 초기화 */
+  #confirmResultBtn,
+  #resetResultBtn {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  /* 통계 */
+  #statsContent {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  #toggleStatsBtn {
+    width: 100%;
+  }
+
+  #statsList {
+    width: 100%;
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 48px;
+    gap: 6px;
+    align-items: center;
+    width: 100%;
+    padding: 9px 0;
+    font-size: 12px;
+  }
+
+  .stat-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .stat-bar-container {
+    min-width: 0;
+    height: 10px;
+    overflow: hidden;
+    border-radius: 5px;
+  }
+
+  .stat-percent {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .stat-total {
+    display: none;
+  }
+
+  .stat-weight {
+    display: none;
+  }
+
+  /* 긴 텍스트 */
+  p {
+    line-height: 1.5;
+    word-break: keep-all;
+  }
+
+}
+
+
+/* ==========================================
+   아주 작은 휴대폰
+========================================== */
+
+@media (max-width: 380px) {
+
+  body {
+    padding: 8px;
+  }
+
+  h1 {
+    font-size: 21px;
+  }
+
+  .card,
+  section {
+    padding: 12px;
+  }
+
+  #studentInputs {
+    grid-template-columns: 1fr;
+  }
+
+  .results,
+  .result-container,
+  .job-container {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-row {
+    grid-template-columns: 60px 1fr 44px;
+    font-size: 11px;
+  }
+
+}
