@@ -767,3 +767,425 @@ footer {
   }
 
 }
+
+/* ==========================================
+   업무별 통계
+========================================== */
+
+.student-stat {
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: #f8f8f8;
+}
+
+.job-stat-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.job-stat-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 8px;
+  background: white;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.job-stat-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.job-stat-toggle {
+  width: 100%;
+  margin-top: 8px;
+  padding: 7px;
+  font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .job-stat-list {
+    grid-template-columns: 1fr;
+  }
+
+  .student-stat {
+    padding: 10px;
+  }
+}
+
+/* ==========================================
+   청소 업무 결과 - 모바일 최적화
+   ========================================== */
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 업무 카드 */
+.job-card {
+  min-width: 0;
+  padding: 16px 12px;
+  border-radius: 16px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* 업무 이름 */
+.job-card h3 {
+  font-size: 16px;
+  line-height: 1.3;
+  margin: 6px 0;
+  word-break: keep-all;
+}
+
+/* 인원 수 */
+.job-count {
+  font-size: 13px;
+}
+
+/* 학생 이름 목록 */
+.student-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+/* 학생 이름 */
+.student-list .student {
+  font-size: 14px;
+  padding: 8px 6px;
+  border-radius: 8px;
+  text-align: center;
+  word-break: keep-all;
+}
+
+/* 모바일 */
+@media (max-width: 600px) {
+
+  .result-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .job-card {
+    padding: 14px 12px;
+    border-radius: 14px;
+  }
+
+  .job-card h3 {
+    font-size: 15px;
+  }
+
+  .student-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .student-list .student {
+    font-size: 14px;
+    padding: 8px 4px;
+  }
+
+}
+
+/* 아주 작은 휴대폰 */
+@media (max-width: 380px) {
+
+  .job-card {
+    padding: 12px 10px;
+  }
+
+  .job-card h3 {
+    font-size: 14px;
+  }
+
+  .student-list .student {
+    font-size: 13px;
+  }
+
+}
+
+.stat-jobs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.stat-jobs span {
+  background: #f1f3f5;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #555;
+}
+
+.stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ==========================================
+   통계 카드
+========================================== */
+
+.stat-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.stat-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #222;
+}
+
+.stat-total {
+  font-size: 13px;
+  color: #777;
+}
+
+/* 배정 확률 */
+
+.stat-probability {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+
+/* 확률 막대 */
+
+.stat-bar-container {
+  width: 100%;
+  height: 8px;
+  background: #eeeeee;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 13px;
+}
+
+.stat-bar {
+  height: 100%;
+  background: #4f7cff;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+/* 업무 기록 */
+
+.stat-job-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.stat-job-item {
+  padding: 5px 9px;
+  background: #f3f4f6;
+  border-radius: 7px;
+  font-size: 12px;
+  color: #555;
+}
+
+.stat-job-empty {
+  font-size: 12px;
+  color: #999;
+}
+
+/* ==========================================
+   모바일
+========================================== */
+
+@media (max-width: 600px) {
+
+  .stat-card {
+    padding: 13px;
+    border-radius: 12px;
+  }
+
+  .stat-name {
+    font-size: 16px;
+  }
+
+  .stat-total {
+    font-size: 12px;
+  }
+
+  .stat-probability {
+    font-size: 13px;
+  }
+
+  .stat-job-item {
+    font-size: 11px;
+    padding: 5px 7px;
+  }
+
+}
+
+/* ==========================================
+   통계 영역
+========================================== */
+
+#statsContent {
+  margin-top: 18px;
+}
+
+/* 통계 학생 목록 */
+#statsList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* 학생별 통계 카드 */
+.stat-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+/* 이름 + 총 횟수 */
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.stat-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+}
+
+.stat-total {
+  font-size: 14px;
+  font-weight: 600;
+  color: #777;
+  white-space: nowrap;
+}
+
+/* 배정 확률 */
+.stat-probability {
+  font-size: 15px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+/* 확률 막대 배경 */
+.stat-bar-container {
+  width: 100%;
+  height: 9px;
+  background: #eeeeee;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+/* 확률 막대 */
+.stat-bar {
+  height: 100%;
+  min-width: 2px;
+  border-radius: 999px;
+  background: #4f7cff;
+  transition: width 0.4s ease;
+}
+
+/* 업무별 기록 */
+.stat-job-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid #eeeeee;
+}
+
+/* 업무 하나 */
+.stat-job-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 8px 10px;
+
+  background: #f7f8fa;
+  border-radius: 9px;
+
+  font-size: 13px;
+  color: #444;
+}
+
+/* 기록 없음 */
+.stat-job-empty {
+  padding: 10px;
+  text-align: center;
+
+  font-size: 13px;
+  color: #999;
+}
+
+/* ==========================================
+   모바일
+========================================== */
+
+@media (max-width: 700px) {
+
+  #statsList {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 15px;
+    border-radius: 14px;
+  }
+
+  .stat-name {
+    font-size: 16px;
+  }
+
+  .stat-total {
+    font-size: 13px;
+  }
+
+  .stat-probability {
+    font-size: 14px;
+  }
+
+  .stat-job-item {
+    font-size: 12px;
+    padding: 7px 9px;
+  }
+}
