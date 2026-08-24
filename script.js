@@ -122,6 +122,20 @@ const washResult = document.getElementById("washResult");
 
 const resultGrid = document.querySelector(".result-grid");
 
+const openOverviewBtn = document.getElementById("openOverviewBtn");
+
+const closeOverviewBtn = document.getElementById("closeOverviewBtn");
+
+const overviewModal = document.getElementById("overviewModal");
+
+const overviewList = document.getElementById("overviewList");
+
+const sortNumberBtn = document.getElementById("sortNumberBtn");
+
+const sortAreaBtn = document.getElementById("sortAreaBtn");
+
+let overviewSortMode = "number";
+
 // ==========================================
 // 학생 입력창 생성
 // ==========================================
@@ -480,6 +494,10 @@ function shuffle(array) {
 // Firebase 학생 데이터 가져오기
 // ==========================================
 
+// ==========================================
+// Firebase 학생 데이터 가져오기
+// ==========================================
+
 async function getStudentData() {
   const snapshot = await getDocs(collection(db, "students"));
 
@@ -497,6 +515,9 @@ async function getStudentData() {
 
       // 업무별 기록
       jobs: data.jobs || {},
+
+      // 최근 청소 기록
+      history: data.history || [],
     });
   });
 
@@ -745,6 +766,8 @@ async function drawCleaning() {
 
     currentAssignment = assignment;
 
+    renderOverview();
+
     // ----------------------------------------
     // 결과 표시
     // ----------------------------------------
@@ -919,24 +942,65 @@ async function confirmAssignment() {
       for (const student of assignedStudents) {
         if (!student.id) continue;
 
-        // 현재 jobs 기록
+        // ==========================================
+        // 현재 기록 가져오기
+        // ==========================================
+
         const currentJobs = student.jobs || {};
 
+        const currentHistory = student.history || [];
+
+        // ==========================================
         // 해당 업무 기존 횟수
+        // ==========================================
+
         const currentJobCount = currentJobs[job.name] || 0;
 
+        // ==========================================
         // 전체 청소 횟수 증가
+        // ==========================================
+
         const newTotal = (student.total || 0) + 1;
 
-        // 해당 업무 횟수 증가
+        // ==========================================
+        // 업무별 횟수 증가
+        // ==========================================
+
         const newJobs = {
           ...currentJobs,
+
           [job.name]: currentJobCount + 1,
         };
 
+        // ==========================================
+        // 최근 청소 기록 추가
+        // 최대 30개만 보관
+        // ==========================================
+
+        const newHistory = [
+          ...currentHistory,
+
+          {
+            job: job.name,
+
+            label: job.label,
+
+            area: job.area,
+
+            date: new Date().toISOString(),
+          },
+        ].slice(-30);
+
+        // ==========================================
+        // Firebase 저장
+        // ==========================================
+
         await updateDoc(doc(db, "students", student.id), {
           total: newTotal,
+
           jobs: newJobs,
+
+          history: newHistory,
         });
       }
     }
@@ -1179,21 +1243,18 @@ async function loadStatistics() {
 
     const excludedSet = new Set(
       getExcludedStudents().map((name) =>
-        name.replace(/\s+/g, "").toLowerCase()
-      )
+        name.replace(/\s+/g, "").toLowerCase(),
+      ),
     );
 
     const availableStudents = students.filter((student) => {
-      const key = student.name
-        .replace(/\s+/g, "")
-        .toLowerCase();
+      const key = student.name.replace(/\s+/g, "").toLowerCase();
 
       return !excludedSet.has(key);
     });
 
     if (availableStudents.length === 0) {
-      statsList.innerHTML =
-        "<p>통계를 표시할 학생이 없습니다.</p>";
+      statsList.innerHTML = "<p>통계를 표시할 학생이 없습니다.</p>";
 
       return;
     }
@@ -1220,18 +1281,13 @@ async function loadStatistics() {
     // ------------------------------------------
 
     for (let i = 0; i < simulationCount; i++) {
-
-      const selected = weightedRandom(
-        availableStudents,
-        TOTAL_SELECTED
-      );
+      const selected = weightedRandom(availableStudents, TOTAL_SELECTED);
 
       let remainingStudents = [...selected];
 
       const shuffledJobs = shuffle(JOBS);
 
       for (const job of shuffledJobs) {
-
         if (remainingStudents.length === 0) {
           break;
         }
@@ -1243,12 +1299,9 @@ async function loadStatistics() {
         // --------------------------------------
 
         candidates.sort((a, b) => {
+          const aAreaCount = getAreaHistoryCount(a, job.area);
 
-          const aAreaCount =
-            getAreaHistoryCount(a, job.area);
-
-          const bAreaCount =
-            getAreaHistoryCount(b, job.area);
+          const bAreaCount = getAreaHistoryCount(b, job.area);
 
           if (aAreaCount !== bAreaCount) {
             return aAreaCount - bAreaCount;
@@ -1267,20 +1320,16 @@ async function loadStatistics() {
         // 상위 후보에서 랜덤 선택
         const topCandidates = candidates.slice(
           0,
-          Math.min(3, candidates.length)
+          Math.min(3, candidates.length),
         );
 
-        const chosen = shuffle(topCandidates).slice(
-          0,
-          job.count
-        );
+        const chosen = shuffle(topCandidates).slice(0, job.count);
 
         // --------------------------------------
         // 업무 배정 기록
         // --------------------------------------
 
         chosen.forEach((student) => {
-
           if (
             jobCounts[student.id] &&
             jobCounts[student.id][job.name] !== undefined
@@ -1290,10 +1339,9 @@ async function loadStatistics() {
         });
 
         // 선택된 학생 제거
-        remainingStudents =
-          remainingStudents.filter(
-            (student) => !chosen.includes(student)
-          );
+        remainingStudents = remainingStudents.filter(
+          (student) => !chosen.includes(student),
+        );
       }
     }
 
@@ -1303,13 +1351,88 @@ async function loadStatistics() {
 
     statsList.innerHTML = "";
 
+    // ==========================================
+    // 최근 실제 청소 기록
+    // ==========================================
+
+    const recentHistory = [];
+
+    availableStudents.forEach((student) => {
+      if (!student.history) return;
+
+      student.history.forEach((record) => {
+        recentHistory.push({
+          studentName: student.name,
+          ...record,
+        });
+      });
+    });
+
+    // 학생 이름순 정렬
+    recentHistory.sort((a, b) =>
+      a.studentName.localeCompare(b.studentName, "ko"),
+    );
+
+    // ==========================================
+    // 최근 배정 기록 표시
+    // ==========================================
+
+    if (recentHistory.length > 0) {
+      const recentTitle = document.createElement("div");
+
+      recentTitle.className = "stat-section-title";
+      recentTitle.textContent = "🕒 최근 배정 기록";
+
+      statsList.appendChild(recentTitle);
+
+      const recentList = document.createElement("div");
+
+      recentList.className = "recent-history-list";
+
+      recentHistory.slice(0, 20).forEach((record) => {
+        const item = document.createElement("div");
+
+        item.className = "recent-history-item";
+
+        const studentName = document.createElement("strong");
+
+        studentName.textContent = record.studentName;
+
+        const jobName = document.createElement("span");
+
+        jobName.textContent = record.label;
+
+        const date = document.createElement("small");
+
+        const dateObject = new Date(record.date);
+
+        date.textContent =
+          dateObject.toLocaleDateString("ko-KR", {
+            month: "numeric",
+            day: "numeric",
+          }) +
+          " " +
+          dateObject.toLocaleTimeString("ko-KR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+        item.appendChild(studentName);
+        item.appendChild(jobName);
+        item.appendChild(date);
+
+        recentList.appendChild(item);
+      });
+
+      statsList.appendChild(recentList);
+    }
+
     // 학생 이름순
-    const sortedStudents = [...availableStudents].sort(
-      (a, b) => a.name.localeCompare(b.name, "ko")
+    const sortedStudents = [...availableStudents].sort((a, b) =>
+      a.name.localeCompare(b.name, "ko"),
     );
 
     sortedStudents.forEach((student) => {
-
       const card = document.createElement("div");
 
       card.className = "stat-card";
@@ -1332,8 +1455,7 @@ async function loadStatistics() {
 
       total.className = "stat-total";
 
-      total.textContent =
-        `총 ${student.total || 0}회`;
+      total.textContent = `총 ${student.total || 0}회`;
 
       header.appendChild(name);
       header.appendChild(total);
@@ -1344,61 +1466,42 @@ async function loadStatistics() {
       // 업무별 확률
       // ----------------------------------------
 
-      const probabilityTitle =
-        document.createElement("div");
+      const probabilityTitle = document.createElement("div");
 
-      probabilityTitle.className =
-        "stat-section-title";
+      probabilityTitle.className = "stat-section-title";
 
-      probabilityTitle.textContent =
-        "🎲 업무별 배정 확률";
+      probabilityTitle.textContent = "🎲 업무별 배정 확률";
 
       card.appendChild(probabilityTitle);
 
-      const probabilityList =
-        document.createElement("div");
+      const probabilityList = document.createElement("div");
 
-      probabilityList.className =
-        "stat-job-list";
+      probabilityList.className = "stat-job-list";
 
       // 확률이 높은 업무부터 정렬
       const jobStatistics = JOBS.map((job) => {
+        const count = jobCounts[student.id][job.name] || 0;
 
-        const count =
-          jobCounts[student.id][job.name] || 0;
-
-        const probability =
-          (count / simulationCount) * 100;
+        const probability = (count / simulationCount) * 100;
 
         return {
           job,
           probability,
         };
-
-      }).sort(
-        (a, b) =>
-          b.probability - a.probability
-      );
+      }).sort((a, b) => b.probability - a.probability);
 
       jobStatistics.forEach((item) => {
+        const jobItem = document.createElement("div");
 
-        const jobItem =
-          document.createElement("div");
+        jobItem.className = "stat-job-item";
 
-        jobItem.className =
-          "stat-job-item";
+        const jobName = document.createElement("span");
 
-        const jobName =
-          document.createElement("span");
+        jobName.textContent = item.job.label;
 
-        jobName.textContent =
-          item.job.label;
+        const probability = document.createElement("strong");
 
-        const probability =
-          document.createElement("strong");
-
-        probability.textContent =
-          `${item.probability.toFixed(1)}%`;
+        probability.textContent = `${item.probability.toFixed(1)}%`;
 
         jobItem.appendChild(jobName);
         jobItem.appendChild(probability);
@@ -1412,51 +1515,37 @@ async function loadStatistics() {
       // 실제 업무 기록
       // ----------------------------------------
 
-      const historyTitle =
-        document.createElement("div");
+      const historyTitle = document.createElement("div");
 
-      historyTitle.className =
-        "stat-section-title";
+      historyTitle.className = "stat-section-title";
 
-      historyTitle.textContent =
-        "📋 지금까지 한 업무";
+      historyTitle.textContent = "📋 지금까지 한 업무";
 
       card.appendChild(historyTitle);
 
-      const historyList =
-        document.createElement("div");
+      const historyList = document.createElement("div");
 
-      historyList.className =
-        "stat-job-list";
+      historyList.className = "stat-job-list";
 
       let hasHistory = false;
 
       JOBS.forEach((job) => {
-
-        const count =
-          student.jobs?.[job.name] || 0;
+        const count = student.jobs?.[job.name] || 0;
 
         if (count > 0) {
-
           hasHistory = true;
 
-          const jobItem =
-            document.createElement("div");
+          const jobItem = document.createElement("div");
 
-          jobItem.className =
-            "stat-job-item";
+          jobItem.className = "stat-job-item";
 
-          const jobName =
-            document.createElement("span");
+          const jobName = document.createElement("span");
 
-          jobName.textContent =
-            job.label;
+          jobName.textContent = job.label;
 
-          const jobCount =
-            document.createElement("strong");
+          const jobCount = document.createElement("strong");
 
-          jobCount.textContent =
-            `${count}회`;
+          jobCount.textContent = `${count}회`;
 
           jobItem.appendChild(jobName);
           jobItem.appendChild(jobCount);
@@ -1466,15 +1555,11 @@ async function loadStatistics() {
       });
 
       if (!hasHistory) {
+        const empty = document.createElement("div");
 
-        const empty =
-          document.createElement("div");
+        empty.className = "stat-job-empty";
 
-        empty.className =
-          "stat-job-empty";
-
-        empty.textContent =
-          "아직 업무 기록이 없습니다.";
+        empty.textContent = "아직 업무 기록이 없습니다.";
 
         historyList.appendChild(empty);
       }
@@ -1483,7 +1568,6 @@ async function loadStatistics() {
 
       statsList.appendChild(card);
     });
-
   } catch (error) {
 
     console.error(
@@ -1531,8 +1615,10 @@ const ADMIN_PASSWORD =
 
       for (const student of students) {
         await updateDoc(doc(db, "students", student.id), {
+          // 전체 청소 횟수
           total: 0,
 
+          // 업무별 횟수
           jobs: {
             desk1: 0,
             desk2: 0,
@@ -1557,6 +1643,9 @@ const ADMIN_PASSWORD =
 
             window: 0,
           },
+
+          // 최근 청소 기록도 전부 삭제
+          history: [],
         });
       }
 
@@ -1574,4 +1663,417 @@ const ADMIN_PASSWORD =
     }
   });
 
-  
+
+// ==========================================
+// 현재 배정 한눈에 보기
+// ==========================================
+
+function renderOverview() {
+
+  // 배정 결과가 없는 경우
+  if (!currentAssignment) {
+
+    overviewList.innerHTML = `
+      <div class="overview-empty">
+        <div class="overview-empty-icon">📋</div>
+        <strong>아직 청소 배정 결과가 없습니다.</strong>
+        <span>먼저 청소 랜덤 배정을 해주세요.</span>
+      </div>
+    `;
+
+    return;
+  }
+
+
+  // ==========================================
+  // 학생 번호 가져오기
+  // ==========================================
+
+  const studentOrder = getStudents();
+
+
+  // ==========================================
+  // 번호순
+  // ==========================================
+
+  if (overviewSortMode === "number") {
+
+    const assignments = [];
+
+    JOBS.forEach((job) => {
+
+      const students =
+        currentAssignment[job.name] || [];
+
+      students.forEach((student) => {
+
+        assignments.push({
+          student: student.name,
+          job: job.label,
+          area: job.area
+        });
+
+      });
+
+    });
+
+
+    // 학생 명단에 입력된 순서대로 정렬
+    assignments.sort((a, b) => {
+
+      return (
+        studentOrder.indexOf(a.student) -
+        studentOrder.indexOf(b.student)
+      );
+
+    });
+
+
+    overviewList.innerHTML = `
+      <div class="overview-number-grid"></div>
+    `;
+
+    const numberGrid =
+      overviewList.querySelector(".overview-number-grid");
+
+
+    assignments.forEach((item) => {
+
+      const studentNumber =
+        studentOrder.indexOf(item.student) + 1;
+
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "overview-number-row";
+
+
+      const number =
+        document.createElement("span");
+
+      number.className =
+        "overview-student-number";
+
+      number.textContent =
+        String(studentNumber).padStart(2, "0");
+
+
+      const name =
+        document.createElement("strong");
+
+      name.className =
+        "overview-number-name";
+
+      name.textContent =
+        item.student;
+
+
+      const job =
+        document.createElement("span");
+
+      job.className =
+        "overview-number-job";
+
+      job.textContent =
+        item.job;
+
+
+      const area =
+        document.createElement("span");
+
+      area.className =
+        "overview-number-area";
+
+      area.textContent =
+        item.area;
+
+
+      row.appendChild(number);
+      row.appendChild(name);
+      row.appendChild(job);
+      row.appendChild(area);
+
+      numberGrid.appendChild(row);
+
+    });
+
+    return;
+  }
+
+
+  // ==========================================
+  // 구역순
+  // ==========================================
+
+  const areaOrder = [
+    "1분단",
+    "2분단",
+    "3분단",
+    "교탁",
+    "앞문",
+    "뒷문",
+    "창문"
+  ];
+
+
+  overviewList.innerHTML = `
+    <div class="overview-area-grid"></div>
+  `;
+
+  const areaGrid =
+    overviewList.querySelector(".overview-area-grid");
+
+
+  // ==========================================
+  // 구역별 카드 생성
+  // ==========================================
+
+  areaOrder.forEach((area) => {
+
+    const areaJobs =
+      JOBS.filter((job) => job.area === area);
+
+
+    // 해당 구역 카드
+    const areaCard =
+      document.createElement("div");
+
+    areaCard.className =
+      "overview-area-card";
+
+
+    // 구역 제목
+    const areaHeader =
+      document.createElement("div");
+
+    areaHeader.className =
+      "overview-area-header";
+
+
+    const areaTitle =
+      document.createElement("h3");
+
+    areaTitle.textContent =
+      area;
+
+
+    const areaCount =
+      document.createElement("span");
+
+
+    let totalStudents = 0;
+
+    areaJobs.forEach((job) => {
+
+      totalStudents +=
+        (currentAssignment[job.name] || []).length;
+
+    });
+
+
+    areaCount.textContent =
+      `${totalStudents}명`;
+
+
+    areaHeader.appendChild(areaTitle);
+    areaHeader.appendChild(areaCount);
+
+    areaCard.appendChild(areaHeader);
+
+
+    // ==========================================
+    // 업무별 표시
+    // ==========================================
+
+    areaJobs.forEach((job) => {
+
+      const students =
+        currentAssignment[job.name] || [];
+
+
+      // 배정된 사람이 없으면 표시하지 않음
+      if (students.length === 0) {
+        return;
+      }
+
+
+      const jobBox =
+        document.createElement("div");
+
+      jobBox.className =
+        "overview-area-job";
+
+
+      const jobTitle =
+        document.createElement("div");
+
+      jobTitle.className =
+        "overview-area-job-title";
+
+
+      // 업무 아이콘
+      let icon = "🧹";
+
+      if (job.name.startsWith("desk")) {
+        icon = "🪑";
+      } else if (job.name.startsWith("sweep")) {
+        icon = "🧹";
+      } else if (job.name.startsWith("mop")) {
+        icon = "🧽";
+      } else if (job.name.startsWith("wash")) {
+        icon = "🪣";
+      } else if (job.name === "window") {
+        icon = "🪟";
+      }
+
+
+      jobTitle.innerHTML = `
+        <span class="overview-job-icon">
+          ${icon}
+        </span>
+
+        <span>
+          ${job.label.replace(area, "").trim()}
+        </span>
+      `;
+
+
+      jobBox.appendChild(jobTitle);
+
+
+      // 학생들
+      const studentBox =
+        document.createElement("div");
+
+      studentBox.className =
+        "overview-area-students";
+
+
+      students.forEach((student) => {
+
+        const studentNumber =
+          studentOrder.indexOf(student.name) + 1;
+
+
+        const studentTag =
+          document.createElement("span");
+
+        studentTag.className =
+          "overview-student-tag";
+
+
+        studentTag.textContent =
+          `${studentNumber}번 ${student.name}`;
+
+
+        studentBox.appendChild(studentTag);
+
+      });
+
+
+      jobBox.appendChild(studentBox);
+
+      areaCard.appendChild(jobBox);
+
+    });
+
+
+    areaGrid.appendChild(areaCard);
+
+  });
+
+}
+
+
+// ==========================================
+// 한눈에 보기 팝업 열기
+// ==========================================
+
+openOverviewBtn.addEventListener("click", () => {
+
+  renderOverview();
+
+  overviewModal.classList.add("show");
+
+});
+
+
+// ==========================================
+// 팝업 닫기
+// ==========================================
+
+closeOverviewBtn.addEventListener("click", () => {
+
+  overviewModal.classList.remove("show");
+
+});
+
+
+// ==========================================
+// 팝업 바깥 클릭
+// ==========================================
+
+overviewModal.addEventListener("click", (event) => {
+
+  if (event.target === overviewModal) {
+
+    overviewModal.classList.remove("show");
+
+  }
+
+});
+
+
+// ==========================================
+// ESC로 닫기
+// ==========================================
+
+document.addEventListener("keydown", (event) => {
+
+  if (event.key === "Escape") {
+
+    overviewModal.classList.remove("show");
+
+  }
+
+});
+
+
+// ==========================================
+// 번호순
+// ==========================================
+
+sortNumberBtn.addEventListener("click", () => {
+
+  overviewSortMode = "number";
+
+
+  sortNumberBtn.classList.add("active");
+
+  sortAreaBtn.classList.remove("active");
+
+
+  renderOverview();
+
+});
+
+
+// ==========================================
+// 구역순
+// ==========================================
+
+sortAreaBtn.addEventListener("click", () => {
+
+  overviewSortMode = "area";
+
+
+  sortAreaBtn.classList.add("active");
+
+  sortNumberBtn.classList.remove("active");
+
+
+  renderOverview();
+
+});

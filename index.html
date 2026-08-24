@@ -16,126 +16,296 @@
       <p>청소 담당을 공평하게 랜덤 배정합니다.</p>
     </header>
 
-    <!-- 학생 명단 -->
-    <div class="section-title">
-  <div>
-    <h2>학생 명단</h2>
-    <span id="studentCount">0 / 35명</span>
-  </div>
 
-  <button id="toggleStudentsBtn" class="toggle-btn">
-    ▲ 접기
-  </button>
-</div>
+    <!-- ==========================================
+         학생 명단
+    ========================================== -->
 
-<div id="studentInputs" class="student-inputs"></div>
+    <section class="card">
 
-<div class="exclude-section">
+      <div class="section-title">
 
-  <div class="exclude-title">
-    <div>
-      <h3>🚫 오늘 제외할 학생</h3>
-      <p>오늘 청소 배정에서만 제외됩니다.</p>
-    </div>
+        <div>
+          <h2>학생 명단</h2>
+          <span id="studentCount">0 / 35명</span>
+        </div>
 
-    <span id="excludeCount">0명</span>
-  </div>
+        <button id="toggleStudentsBtn" class="toggle-btn">
+          ▲ 접기
+        </button>
 
-  <div id="excludeInputs" class="exclude-inputs"></div>
+      </div>
 
-  <button
-    id="addExcludeBtn"
-    class="sub-btn"
-  >
-    + 제외 학생 추가
-  </button>
 
-</div>
+      <div id="studentInputs" class="student-inputs"></div>
+
+
+      <!-- 제외 학생 -->
+
+      <div class="exclude-section">
+
+        <div class="exclude-title">
+
+          <div>
+            <h3>🚫 오늘 제외할 학생</h3>
+            <p>오늘 청소 배정에서만 제외됩니다.</p>
+          </div>
+
+          <span id="excludeCount">0명</span>
+
+        </div>
+
+
+        <div
+          id="excludeInputs"
+          class="exclude-inputs"
+        ></div>
+
+
+        <button
+          id="addExcludeBtn"
+          class="sub-btn"
+        >
+          + 제외 학생 추가
+        </button>
+
+      </div>
+
+
+      <!-- 학생 명단 버튼 -->
 
       <div class="button-group">
-  <button id="addStudentBtn" class="sub-btn">
-    + 학생 추가
-  </button>
 
-  <button id="saveStudentsBtn" class="sub-btn">
-    💾 명단 저장
-  </button>
+        <button
+          id="addStudentBtn"
+          class="sub-btn"
+        >
+          + 학생 추가
+        </button>
 
-  <button id="clearStudentsBtn" class="sub-btn danger">
-    명단 초기화
-  </button>
-</div>
+        <button
+          id="saveStudentsBtn"
+          class="sub-btn"
+        >
+          💾 명단 저장
+        </button>
+
+        <button
+          id="clearStudentsBtn"
+          class="sub-btn danger"
+        >
+          명단 초기화
+        </button>
+
+      </div>
+
     </section>
 
-    <!-- 랜덤 배정 -->
+
+    <!-- ==========================================
+         랜덤 배정
+    ========================================== -->
+
     <section class="draw-section">
-      <button id="drawBtn" class="draw-btn">
+
+      <button
+        id="drawBtn"
+        class="draw-btn"
+      >
         🎲 청소 랜덤 배정
       </button>
 
-      <p id="drawMessage" class="draw-message">
+      <p
+        id="drawMessage"
+        class="draw-message"
+      >
         학생 12명을 입력한 후 배정 버튼을 눌러주세요.
       </p>
+
     </section>
 
-    <!-- 결과 -->
-    <section id="resultSection" class="result-section">
 
-      <h2>📋 오늘의 청소 담당</h2>
+    <!-- ==========================================
+         오늘의 청소 담당
+    ========================================== -->
 
-      <div id="resultsContainer" class="result-grid"></div>
+    <section
+      id="resultSection"
+      class="result-section"
+    >
+
+      <div class="result-header">
+
+        <h2>📋 오늘의 청소 담당</h2>
+
+        <button
+          id="openOverviewBtn"
+          class="overview-open-btn"
+        >
+          👀 한눈에 보기
+        </button>
+
+      </div>
+
+
+      <!-- 청소 결과 -->
+
+      <div
+        id="resultsContainer"
+        class="result-grid"
+      ></div>
+
+
+      <!-- 결과 버튼 -->
 
       <div class="result-buttons">
 
-  <button
-    id="confirmResultBtn"
-    class="confirm-btn"
-  >
-    ✅ 배정 확정
-  </button>
+        <button
+          id="confirmResultBtn"
+          class="confirm-btn"
+        >
+          ✅ 배정 확정
+        </button>
 
-  <button
-    id="resetResultBtn"
-    class="reset-btn"
-  >
-    결과 초기화
-  </button>
+        <button
+          id="resetResultBtn"
+          class="reset-btn"
+        >
+          결과 초기화
+        </button>
 
-</div>
+      </div>
 
-<section class="card stats-section">
 
-  <div class="section-title">
-    <div>
-      <h2>📊 청소 통계</h2>
-      <p class="section-description">
-        <p class="section-description">
-  청소 기록을 바탕으로 계산한 이번 배정의 상대적인 당첨 가능성입니다.
-</p>
-      </p>
-    </div>
+      <!-- ==========================================
+           청소 통계
+      ========================================== -->
 
-    <button id="toggleStatsBtn" class="toggle-btn">
-      ▼ 보기
-    </button>
-  </div>
+      <section class="card stats-section">
 
-  <div id="statsContent" class="stats-content">
+        <div class="section-title">
 
-    <div id="statsList" class="stats-list"></div>
+          <div>
 
-    <button
-      id="resetHistoryBtn"
-      class="sub-btn danger"
-    >
-      🔐 청소 기록 초기화
-    </button>
+            <h2>📊 청소 통계</h2>
 
-  </div>
+            <p class="section-description">
+              청소 기록을 바탕으로 계산한 이번 배정의 상대적인 당첨 가능성입니다.
+            </p>
 
-</section>
+          </div>
+
+
+          <button
+            id="toggleStatsBtn"
+            class="toggle-btn"
+          >
+            ▼ 보기
+          </button>
+
+        </div>
+
+
+        <!-- 통계 내용 -->
+
+        <div
+          id="statsContent"
+          class="stats-content"
+        >
+
+          <div
+            id="statsList"
+            class="stats-list"
+          ></div>
+
+
+          <button
+            id="resetHistoryBtn"
+            class="sub-btn danger"
+          >
+            🔐 청소 기록 초기화
+          </button>
+
+        </div>
+
+      </section>
 
     </section>
+
+
+    <!-- ==========================================
+         한눈에 보기 팝업
+    ========================================== -->
+
+    <div
+      id="overviewModal"
+      class="overview-modal"
+    >
+
+      <div class="overview-modal-box">
+
+
+        <!-- 팝업 제목 -->
+
+        <div class="overview-modal-header">
+
+          <div>
+
+            <h2>📋 현재 청소 담당</h2>
+
+            <p>
+              현재 배정된 청소 구역을 한눈에 확인합니다.
+            </p>
+
+          </div>
+
+
+          <button
+            id="closeOverviewBtn"
+            class="overview-close-btn"
+          >
+            ✕
+          </button>
+
+        </div>
+
+
+        <!-- 정렬 -->
+
+        <div class="overview-sort">
+
+          <button
+            id="sortNumberBtn"
+            class="overview-sort-btn active"
+          >
+            번호순
+          </button>
+
+          <button
+            id="sortAreaBtn"
+            class="overview-sort-btn"
+          >
+            구역순
+          </button>
+
+        </div>
+
+
+        <!-- 현재 배정 목록 -->
+
+        <div
+          id="overviewList"
+          class="overview-list"
+        ></div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         푸터
+    ========================================== -->
 
     <footer>
       <p>청소 랜덤 배정 프로그램</p>
@@ -143,6 +313,11 @@
 
   </div>
 
-  <script type="module" src="script.js"></script>
+
+  <script
+    type="module"
+    src="script.js"
+  ></script>
+
 </body>
 </html>

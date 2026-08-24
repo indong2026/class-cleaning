@@ -1189,3 +1189,959 @@ footer {
     padding: 7px 9px;
   }
 }
+
+/* ==========================================
+   최근 청소 기록
+========================================== */
+
+.stat-history-title {
+  margin-top: 14px;
+  padding-top: 12px;
+
+  border-top: 1px solid #eeeeee;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  color: #555;
+}
+
+.stat-history-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  margin-top: 8px;
+}
+
+.stat-history-item {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 7px 9px;
+
+  background: #f7f8fa;
+
+  border-radius: 8px;
+
+  font-size: 12px;
+}
+
+.stat-history-date {
+  flex-shrink: 0;
+
+  width: 38px;
+
+  color: #999;
+
+  font-weight: 600;
+}
+
+.stat-history-job {
+  color: #444;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stat-history-empty {
+  padding: 8px;
+
+  color: #999;
+
+  font-size: 12px;
+}
+
+
+/* ==========================================
+   최근 청소 기록 - 모바일
+========================================== */
+
+@media (max-width: 600px) {
+
+  .stat-history-item {
+    font-size: 11px;
+
+    padding: 7px 8px;
+  }
+
+  .stat-history-date {
+    width: 34px;
+  }
+
+}
+
+/* ==========================================
+   최근 배정 기록
+========================================== */
+
+.recent-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+
+.recent-history-item {
+  display: grid;
+  grid-template-columns: 70px 1fr auto;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+
+  background: #f7f8fa;
+  border-radius: 9px;
+
+  font-size: 13px;
+}
+
+.recent-history-item strong {
+  font-weight: 700;
+}
+
+.recent-history-item span {
+  color: #555;
+}
+
+.recent-history-item small {
+  color: #999;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+
+  .recent-history-item {
+    grid-template-columns: 60px 1fr auto;
+    gap: 7px;
+    padding: 9px 10px;
+    font-size: 12px;
+  }
+
+  .recent-history-item small {
+    font-size: 10px;
+  }
+
+}
+
+/* ==========================================
+   현재 배정 한눈에 보기
+========================================== */
+
+.overview-section {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.overview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.overview-header h3 {
+  font-size: 17px;
+  margin-bottom: 4px;
+}
+
+.overview-header p {
+  font-size: 12px;
+  color: #999;
+}
+
+.overview-content {
+  margin-top: 15px;
+}
+
+.overview-sort {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.overview-sort-btn {
+  border: none;
+  background: #f0f1f3;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.overview-sort-btn.active {
+  background: #222;
+  color: white;
+}
+
+.overview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.overview-row {
+  display: grid;
+  grid-template-columns: 35px 90px 1fr 60px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #f7f7f8;
+  border-radius: 9px;
+}
+
+.overview-number {
+  color: #999;
+  font-size: 12px;
+}
+
+.overview-student {
+  font-size: 14px;
+}
+
+.overview-job {
+  font-size: 13px;
+  color: #555;
+}
+
+.overview-area {
+  text-align: right;
+  font-size: 12px;
+  color: #888;
+}
+
+.overview-empty {
+  padding: 15px;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+}
+
+.statistics-subtitle {
+  font-size: 17px;
+  margin-bottom: 15px;
+}
+
+
+/* 모바일 */
+
+@media (max-width: 600px) {
+
+  .overview-header {
+    align-items: flex-start;
+  }
+
+  .overview-header .toggle-btn {
+    flex-shrink: 0;
+  }
+
+  .overview-row {
+    grid-template-columns: 25px 70px 1fr;
+    gap: 6px;
+  }
+
+  .overview-area {
+    display: none;
+  }
+
+  .overview-student {
+    font-size: 13px;
+  }
+
+  .overview-job {
+    font-size: 12px;
+  }
+
+}
+
+/* ==========================================
+   오늘의 청소 담당 헤더
+========================================== */
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.result-header h2 {
+  margin: 0;
+}
+
+
+/* 한눈에 보기 버튼 */
+
+.overview-open-btn {
+  border: none;
+  background: #222;
+  color: white;
+  padding: 9px 13px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.overview-open-btn:hover {
+  background: #111;
+}
+
+
+/* ==========================================
+   한눈에 보기 팝업
+========================================== */
+
+.overview-modal {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 9999;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(0, 0, 0, 0.55);
+
+  opacity: 0;
+
+  visibility: hidden;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+}
+
+
+/* 팝업 열림 */
+
+.overview-modal.show {
+  opacity: 1;
+
+  visibility: visible;
+}
+
+
+/* ==========================================
+   팝업 박스
+========================================== */
+
+.overview-modal-box {
+  width: min(1000px, 100%);
+
+  max-height: 90vh;
+
+  background: #ffffff;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.25);
+
+  overflow: hidden;
+
+  display: flex;
+
+  flex-direction: column;
+
+  transform: translateY(10px) scale(0.98);
+
+  transition: transform 0.2s ease;
+}
+
+
+.overview-modal.show
+.overview-modal-box {
+
+  transform:
+    translateY(0)
+    scale(1);
+
+}
+
+
+/* ==========================================
+   팝업 상단
+========================================== */
+
+.overview-modal-header {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 22px 24px 16px;
+
+  border-bottom: 1px solid #eeeeee;
+
+}
+
+
+.overview-modal-header h2 {
+
+  margin: 0 0 5px;
+
+  font-size: 22px;
+
+}
+
+
+.overview-modal-header p {
+
+  margin: 0;
+
+  color: #777;
+
+  font-size: 13px;
+
+}
+
+
+/* ==========================================
+   닫기 버튼
+========================================== */
+
+.overview-close-btn {
+
+  width: 38px;
+
+  height: 38px;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: #f3f3f3;
+
+  color: #555;
+
+  font-size: 18px;
+
+  cursor: pointer;
+
+  flex-shrink: 0;
+
+  transition: 0.2s;
+}
+
+
+.overview-close-btn:hover {
+
+  background: #e7e7e7;
+
+}
+
+
+/* ==========================================
+   정렬 버튼
+========================================== */
+
+.overview-sort {
+
+  display: flex;
+
+  gap: 8px;
+
+  padding: 14px 24px;
+
+  border-bottom: 1px solid #eeeeee;
+
+}
+
+
+.overview-sort-btn {
+
+  border: none;
+
+  background: #f1f1f1;
+
+  color: #666;
+
+  padding: 8px 16px;
+
+  border-radius: 8px;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+.overview-sort-btn:hover {
+
+  background: #e7e7e7;
+
+}
+
+
+.overview-sort-btn.active {
+
+  background: #222;
+
+  color: white;
+
+}
+
+
+/* ==========================================
+   내용 영역
+========================================== */
+
+.overview-list {
+
+  padding: 18px 24px 24px;
+
+  overflow-y: auto;
+
+  min-height: 0;
+}
+
+
+/* ==========================================
+   번호순
+========================================== */
+
+.overview-number-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 7px 10px;
+}
+
+
+.overview-number-row {
+
+  display: grid;
+
+  grid-template-columns:
+    38px
+    minmax(65px, 0.7fr)
+    minmax(120px, 1.5fr)
+    55px;
+
+  align-items: center;
+
+  gap: 8px;
+
+  min-height: 42px;
+
+  padding: 7px 10px;
+
+  background: #f8f8f8;
+
+  border: 1px solid #eeeeee;
+
+  border-radius: 9px;
+}
+
+
+.overview-student-number {
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  color: #888;
+
+  text-align: center;
+}
+
+
+.overview-number-name {
+
+  font-size: 14px;
+
+  color: #222;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+.overview-number-job {
+
+  font-size: 12px;
+
+  color: #555;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+.overview-number-area {
+
+  justify-self: end;
+
+  padding: 4px 7px;
+
+  border-radius: 6px;
+
+  background: #eeeeee;
+
+  color: #666;
+
+  font-size: 10px;
+
+  white-space: nowrap;
+}
+
+
+/* ==========================================
+   구역순
+========================================== */
+
+.overview-area-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 14px;
+}
+
+
+.overview-area-card {
+
+  background: #f8f9fa;
+
+  border: 1px solid #e8e8e8;
+
+  border-radius: 13px;
+
+  overflow: hidden;
+}
+
+
+/* ==========================================
+   구역 제목
+========================================== */
+
+.overview-area-header {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 12px 14px;
+
+  background: #f1f3f5;
+
+  border-bottom: 1px solid #e5e5e5;
+}
+
+
+.overview-area-header h3 {
+
+  margin: 0;
+
+  font-size: 15px;
+
+  color: #222;
+
+}
+
+
+.overview-area-header span {
+
+  padding: 3px 7px;
+
+  border-radius: 20px;
+
+  background: white;
+
+  color: #777;
+
+  font-size: 11px;
+
+  font-weight: 600;
+}
+
+
+/* ==========================================
+   구역 안의 업무
+========================================== */
+
+.overview-area-job {
+
+  padding: 10px 12px;
+
+  border-bottom: 1px solid #eeeeee;
+}
+
+
+.overview-area-job:last-child {
+
+  border-bottom: none;
+
+}
+
+
+.overview-area-job-title {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  margin-bottom: 7px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  color: #555;
+
+}
+
+
+.overview-job-icon {
+
+  font-size: 14px;
+
+}
+
+
+/* ==========================================
+   학생 이름 태그
+========================================== */
+
+.overview-area-students {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 5px;
+
+}
+
+
+.overview-student-tag {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 5px 8px;
+
+  background: white;
+
+  border: 1px solid #e3e3e3;
+
+  border-radius: 7px;
+
+  font-size: 11px;
+
+  color: #333;
+
+}
+
+
+/* ==========================================
+   배정 결과 없음
+========================================== */
+
+.overview-empty {
+
+  min-height: 250px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  color: #777;
+
+}
+
+
+.overview-empty-icon {
+
+  font-size: 42px;
+
+  margin-bottom: 5px;
+
+}
+
+
+.overview-empty strong {
+
+  color: #444;
+
+  font-size: 15px;
+
+}
+
+
+.overview-empty span {
+
+  font-size: 12px;
+
+}
+
+
+/* ==========================================
+   모바일
+========================================== */
+
+@media (max-width: 700px) {
+
+  .overview-modal {
+
+    padding: 10px;
+
+  }
+
+
+  .overview-modal-box {
+
+    max-height: 94vh;
+
+    border-radius: 16px;
+
+  }
+
+
+  .overview-modal-header {
+
+    padding: 18px 16px 13px;
+
+  }
+
+
+  .overview-modal-header h2 {
+
+    font-size: 18px;
+
+  }
+
+
+  .overview-modal-header p {
+
+    font-size: 11px;
+
+  }
+
+
+  .overview-sort {
+
+    padding: 11px 16px;
+
+  }
+
+
+  .overview-list {
+
+    padding: 12px 16px 18px;
+
+  }
+
+
+  /* 번호순은 모바일에서 1열 */
+
+  .overview-number-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+
+  .overview-number-row {
+
+    grid-template-columns:
+      32px
+      minmax(55px, 0.7fr)
+      minmax(100px, 1.5fr)
+      50px;
+
+    min-height: 40px;
+
+  }
+
+
+  /* 구역순도 모바일은 1열 */
+
+  .overview-area-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+}
+
+
+/* ==========================================
+   아주 작은 휴대폰
+========================================== */
+
+@media (max-width: 420px) {
+
+  .overview-number-row {
+
+    grid-template-columns:
+      28px
+      60px
+      1fr;
+
+  }
+
+
+  .overview-number-area {
+
+    display: none;
+
+  }
+
+
+  .overview-number-name {
+
+    font-size: 13px;
+
+  }
+
+
+  .overview-number-job {
+
+    font-size: 11px;
+
+  }
+
+}
