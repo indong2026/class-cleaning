@@ -99,6 +99,8 @@ const confirmResultBtn = document.getElementById("confirmResultBtn");
 
 let currentAssignment = null;
 
+let currentJobs = JOBS;
+
 const toggleStudentsBtn = document.getElementById("toggleStudentsBtn");
 
 const excludeInputs = document.getElementById("excludeInputs");
@@ -618,78 +620,69 @@ function weightedRandom(students, count) {
 // ==========================================
 
 async function drawCleaning() {
+
   const excludedStudents = getExcludedStudents();
 
   const students = getStudents();
 
-  // ------------------------------------------
+  // ==========================================
   // 학생 수 검사
-  // ------------------------------------------
+  // ==========================================
 
-  if (students.length < TOTAL_SELECTED) {
-    alert(
-      `최소 ${TOTAL_SELECTED}명의 학생이 필요합니다.\n현재 ${students.length}명입니다.`,
-    );
-
+  if (students.length === 0) {
+    alert("학생 이름을 한 명 이상 입력해주세요.");
     return;
   }
 
-  // ------------------------------------------
+  // ==========================================
   // 중복 이름 검사
-  // ------------------------------------------
+  // ==========================================
 
   if (hasDuplicateNames(students)) {
     alert("같은 이름의 학생이 있습니다.\n학생 이름을 확인해주세요.");
-
     return;
   }
 
-  // ------------------------------------------
+  // ==========================================
   // 버튼 비활성화
-  // ------------------------------------------
+  // ==========================================
 
   drawBtn.classList.add("drawing");
-
   drawBtn.textContent = "🎲 기록 확인 중...";
-
-  drawMessage.textContent = "학생들의 청소 기록을 확인하고 있습니다.";
+  drawMessage.textContent =
+    "학생들의 청소 기록을 확인하고 있습니다.";
 
   try {
-    // ----------------------------------------
+    // ==========================================
     // Firebase 데이터 가져오기
-    // ----------------------------------------
+    // ==========================================
 
     const firebaseStudents = await getStudentData();
 
-    // ----------------------------------------
+    // ==========================================
     // 현재 입력된 학생과 Firebase 데이터 연결
-    // ----------------------------------------
+    // ==========================================
 
     const studentData = students.map((name) => {
       const data = firebaseStudents.find((student) => student.name === name);
 
       // Firebase에 없는 학생
-      // → 새 학생으로 취급
       if (!data) {
         return {
           id: null,
-
           name: name,
-
           total: 0,
-
-          desk: 0,
-
-          sweep: 0,
-
-          mop: 0,
-
-          wash: 0,
+          jobs: {},
+          history: [],
         };
       }
 
       return data;
     });
+
+    // ==========================================
+    // 제외 학생 제거
+    // ==========================================
 
     const availableStudents = studentData.filter((student) => {
       return !excludedStudents.some(
@@ -699,19 +692,27 @@ async function drawCleaning() {
       );
     });
 
-    // ----------------------------------------
-    // 공평 랜덤
-    // ----------------------------------------
+    // ==========================================
+    // 오늘 실제 배정 인원
+    // ==========================================
 
-    drawBtn.textContent = "🎲 공평하게 배정 중...";
+    // 전체 학생 수 - 제외 학생 수
+    const availableCount = availableStudents.length;
 
-    drawMessage.textContent =
-      "청소 횟수가 적은 학생을 우선하여 배정하고 있습니다.";
+    // 원래 청소 업무는 최대 22명
+    // 실제 가능한 학생이 22명보다 적으면 그 인원만 배정
+    const targetCount = Math.min(TOTAL_SELECTED, availableCount);
 
-    // 12명 선택
-    if (availableStudents.length < TOTAL_SELECTED) {
+    const excludedCount = students.length - availableCount;
+
+    // ==========================================
+    // 배정 가능한 학생 수 검사
+    // ==========================================
+
+    if (availableStudents.length < targetCount) {
       alert(
-        `제외 학생을 빼고 배정 가능한 학생이 ${availableStudents.length}명입니다.\n최소 ${TOTAL_SELECTED}명이 필요합니다.`,
+        `배정 가능한 학생이 ${availableStudents.length}명입니다.\n` +
+          `오늘은 ${targetCount}명이 필요합니다.`,
       );
 
       drawBtn.classList.remove("drawing");
@@ -720,38 +721,108 @@ async function drawCleaning() {
       return;
     }
 
-    const selected = weightedRandom(availableStudents, TOTAL_SELECTED);
+    // ==========================================
+    // 오늘 사용할 업무 목록 생성
+    // ==========================================
 
-    // ----------------------------------------
+    const todayJobs = JOBS.map((job) => ({
+      ...job,
+    }));
+
+    // ==========================================
+    // 부족한 인원만큼 2명짜리 업무 줄이기
+    // ==========================================
+
+    let peopleToRemove = TOTAL_SELECTED - targetCount;
+
+    // 2명짜리 업무부터 1명으로 줄임
+    for (const job of todayJobs) {
+      if (peopleToRemove <= 0) {
+        break;
+      }
+
+      if (job.count >= 2) {
+        job.count -= 1;
+
+        peopleToRemove--;
+      }
+    }
+
+    // ==========================================
+    // 그래도 부족하면 1명짜리 업무 제거
+    // ==========================================
+
+    if (peopleToRemove > 0) {
+      for (const job of todayJobs) {
+        if (peopleToRemove <= 0) {
+          break;
+        }
+
+        if (job.count === 1) {
+          job.count = 0;
+
+          peopleToRemove--;
+        }
+      }
+    }
+
+    // ==========================================
+    // 실제 사용할 업무만 남김
+    // ==========================================
+
+    const activeJobs = todayJobs.filter((job) => job.count > 0);
+
+    // ==========================================
+    // 배정 시작
+    // ==========================================
+
+    drawBtn.textContent = "🎲 공평하게 배정 중...";
+
+    drawMessage.textContent =
+      `제외 학생 ${excludedCount}명을 반영하여 ` +
+      `${targetCount}명을 배정하고 있습니다.`;
+
+    // ==========================================
+    // 학생 선택
+    // ==========================================
+
+    const selected = weightedRandom(availableStudents, targetCount);
+
+    // ==========================================
     // 업무 배정
-    // ----------------------------------------
+    // ==========================================
 
     const assignment = {};
 
-    // 아직 업무가 배정되지 않은 학생
     let remainingStudents = [...selected];
 
-    // 업무도 랜덤하게 섞음
-    const shuffledJobs = shuffle(JOBS);
+    // 업무 랜덤 순서
+    const shuffledJobs = shuffle(activeJobs);
 
     for (const job of shuffledJobs) {
       const candidates = [...remainingStudents];
 
-      // 학생마다 이 업무와 같은 구역을 했던 횟수를 기준으로 정렬
+      // ========================================
+      // 같은 구역을 적게 한 학생 우선
+      // ========================================
+
       candidates.sort((a, b) => {
         const aAreaCount = getAreaHistoryCount(a, job.area);
+
         const bAreaCount = getAreaHistoryCount(b, job.area);
 
-        // 같은 구역을 적게 한 학생을 우선
         if (aAreaCount !== bAreaCount) {
           return aAreaCount - bAreaCount;
         }
 
-        // 같은 구역 기록도 같으면 총 청소 횟수가 적은 학생 우선
+        // 전체 청소 횟수 적은 학생 우선
         return (a.total || 0) - (b.total || 0);
       });
 
-      // 후보 중 상위 학생들을 섞어서 랜덤성 유지
+      // ========================================
+      // 상위 후보에서 랜덤 선택
+      // ========================================
+
       const topCandidates = candidates.slice(0, Math.min(3, candidates.length));
 
       const chosen = shuffle(topCandidates).slice(0, job.count);
@@ -764,104 +835,218 @@ async function drawCleaning() {
       );
     }
 
+    // ==========================================
+    // 오늘 실제 업무 저장
+    // ==========================================
+
+    currentJobs = todayJobs;
+
     currentAssignment = assignment;
 
-    renderOverview();
-
-    // ----------------------------------------
+    // ==========================================
     // 결과 표시
-    // ----------------------------------------
+    // ==========================================
 
     setTimeout(() => {
-      displayResult(currentAssignment);
+      displayResult(currentAssignment, currentJobs);
 
       drawBtn.classList.remove("drawing");
 
       drawBtn.textContent = "🎲 다시 랜덤 배정";
 
       drawMessage.textContent =
-        "청소 횟수를 고려하여 오늘의 담당을 결정했습니다.";
+        `청소 횟수를 고려하여 ${targetCount}명의 ` +
+        "오늘 담당을 결정했습니다.";
     }, 700);
   } catch (error) {
-    console.error("청소 배정 실패:", error);
 
-    alert("청소 배정 중 오류가 발생했습니다.\nFirebase 연결을 확인해주세요.");
+    console.error(
+      "청소 배정 실패:",
+      error
+    );
 
-    drawBtn.classList.remove("drawing");
 
-    drawBtn.textContent = "🎲 청소 랜덤 배정";
+    alert(
+      "청소 배정 중 오류가 발생했습니다.\n" +
+      "Firebase 연결을 확인해주세요."
+    );
 
-    drawMessage.textContent = "배정에 실패했습니다.";
+
+    drawBtn.classList.remove(
+      "drawing"
+    );
+
+
+    drawBtn.textContent =
+      "🎲 청소 랜덤 배정";
+
+
+    drawMessage.textContent =
+      "배정에 실패했습니다.";
+
   }
-}
 
-// ==========================================
-// 결과 표시
-// ==========================================
+}
 
 // ==========================================
 // 청소 결과 표시
 // ==========================================
 
-function displayResult(assignment) {
+function displayResult(
+  assignment,
+  jobs = JOBS
+) {
+
   resultGrid.innerHTML = "";
 
-  JOBS.forEach((job) => {
-    const students = assignment[job.name] || [];
 
-    const card = document.createElement("div");
+  // ==========================================
+  // 오늘 실제 사용된 업무만 표시
+  // ==========================================
 
-    card.className = "job-card";
+  jobs.forEach((job) => {
 
-    const icon = document.createElement("div");
-
-    icon.className = "job-icon";
-
-    if (job.name.startsWith("desk")) {
-      icon.textContent = "🪑";
-    } else if (job.name.startsWith("sweep")) {
-      icon.textContent = "🧹";
-    } else if (job.name.startsWith("mop")) {
-      icon.textContent = "🧽";
-    } else if (job.name.startsWith("wash")) {
-      icon.textContent = "🪣";
-    } else {
-      icon.textContent = "🪟";
+    // count가 0이면 표시하지 않음
+    if (job.count <= 0) {
+      return;
     }
 
-    const title = document.createElement("h3");
 
-    title.textContent = job.label;
+    const students =
+      assignment[job.name] || [];
 
-    const count = document.createElement("span");
 
-    count.className = "job-count";
+    // ==========================================
+    // 카드
+    // ==========================================
 
-    count.textContent = `${job.count}명`;
+    const card =
+      document.createElement("div");
 
-    const studentList = document.createElement("div");
+    card.className =
+      "job-card";
 
-    studentList.className = "student-list";
 
-    students.forEach((student, index) => {
-      const element = document.createElement("div");
+    // ==========================================
+    // 아이콘
+    // ==========================================
 
-      element.className = "student animate";
+    const icon =
+      document.createElement("div");
 
-      element.textContent = student.name;
+    icon.className =
+      "job-icon";
 
-      element.style.animationDelay = `${index * 0.08}s`;
 
-      studentList.appendChild(element);
-    });
+    if (job.name.startsWith("desk")) {
+
+      icon.textContent = "🪑";
+
+    } else if (
+      job.name.startsWith("sweep")
+    ) {
+
+      icon.textContent = "🧹";
+
+    } else if (
+      job.name.startsWith("mop")
+    ) {
+
+      icon.textContent = "🧽";
+
+    } else if (
+      job.name.startsWith("wash")
+    ) {
+
+      icon.textContent = "🪣";
+
+    } else {
+
+      icon.textContent = "🪟";
+
+    }
+
+
+    // ==========================================
+    // 업무 이름
+    // ==========================================
+
+    const title =
+      document.createElement("h3");
+
+    title.textContent =
+      job.label;
+
+
+    // ==========================================
+    // 실제 오늘 배정된 인원 표시
+    // ==========================================
+
+    const count =
+      document.createElement("span");
+
+    count.className =
+      "job-count";
+
+
+    count.textContent =
+      `${students.length}명`;
+
+
+    // ==========================================
+    // 학생 목록
+    // ==========================================
+
+    const studentList =
+      document.createElement("div");
+
+    studentList.className =
+      "student-list";
+
+
+    students.forEach(
+      (student, index) => {
+
+        const element =
+          document.createElement("div");
+
+        element.className =
+          "student animate";
+
+
+        element.textContent =
+          student.name;
+
+
+        element.style.animationDelay =
+          `${index * 0.08}s`;
+
+
+        studentList.appendChild(
+          element
+        );
+
+      }
+    );
+
+
+    // ==========================================
+    // 카드 완성
+    // ==========================================
 
     card.appendChild(icon);
+
     card.appendChild(title);
+
     card.appendChild(count);
+
     card.appendChild(studentList);
 
+
     resultGrid.appendChild(card);
+
   });
+
 }
 
 // ==========================================
