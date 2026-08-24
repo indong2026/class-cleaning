@@ -1831,87 +1831,64 @@ function renderOverview() {
   // ==========================================
 
   areaOrder.forEach((area) => {
-
-    const areaJobs =
-      JOBS.filter((job) => job.area === area);
-
+    const areaJobs = JOBS.filter((job) => job.area === area);
 
     // 해당 구역 카드
-    const areaCard =
-      document.createElement("div");
+    const areaCard = document.createElement("div");
 
-    areaCard.className =
-      "overview-area-card";
-
+    areaCard.className = "overview-area-card";
 
     // 구역 제목
-    const areaHeader =
-      document.createElement("div");
+    const areaHeader = document.createElement("div");
 
-    areaHeader.className =
-      "overview-area-header";
+    areaHeader.className = "overview-area-header";
 
+    const areaTitle = document.createElement("h3");
 
-    const areaTitle =
-      document.createElement("h3");
+    areaTitle.textContent = area;
 
-    areaTitle.textContent =
-      area;
-
-
-    const areaCount =
-      document.createElement("span");
-
+    const areaCount = document.createElement("span");
 
     let totalStudents = 0;
 
     areaJobs.forEach((job) => {
-
-      totalStudents +=
-        (currentAssignment[job.name] || []).length;
-
+      totalStudents += (currentAssignment[job.name] || []).length;
     });
 
-
-    areaCount.textContent =
-      `${totalStudents}명`;
-
+    areaCount.textContent = `${totalStudents}명`;
 
     areaHeader.appendChild(areaTitle);
     areaHeader.appendChild(areaCount);
 
     areaCard.appendChild(areaHeader);
 
-
     // ==========================================
     // 업무별 표시
     // ==========================================
 
     areaJobs.forEach((job) => {
+      let students = currentAssignment[job.name] || [];
 
-      const students =
-        currentAssignment[job.name] || [];
+      // ==========================================
+      // 같은 업무 안에서 학생 번호순 정렬
+      // ==========================================
 
+      students = [...students].sort((a, b) => {
+        return studentOrder.indexOf(a.name) - studentOrder.indexOf(b.name);
+      });
 
       // 배정된 사람이 없으면 표시하지 않음
       if (students.length === 0) {
         return;
       }
 
+      const jobBox = document.createElement("div");
 
-      const jobBox =
-        document.createElement("div");
+      jobBox.className = "overview-area-job";
 
-      jobBox.className =
-        "overview-area-job";
+      const jobTitle = document.createElement("div");
 
-
-      const jobTitle =
-        document.createElement("div");
-
-      jobTitle.className =
-        "overview-area-job-title";
-
+      jobTitle.className = "overview-area-job-title";
 
       // 업무 아이콘
       let icon = "🧹";
@@ -1928,60 +1905,45 @@ function renderOverview() {
         icon = "🪟";
       }
 
-
       jobTitle.innerHTML = `
-        <span class="overview-job-icon">
-          ${icon}
-        </span>
+    <span class="overview-job-icon">
+      ${icon}
+    </span>
 
-        <span>
-          ${job.label.replace(area, "").trim()}
-        </span>
-      `;
-
+    <span>
+      ${job.label.replace(area, "").trim()}
+    </span>
+  `;
 
       jobBox.appendChild(jobTitle);
 
-
       // 학생들
-      const studentBox =
-        document.createElement("div");
+      const studentBox = document.createElement("div");
 
-      studentBox.className =
-        "overview-area-students";
+      studentBox.className = "overview-area-students";
 
+      // ==========================================
+      // 학생 번호순으로 표시
+      // ==========================================
 
       students.forEach((student) => {
+        const studentNumber = studentOrder.indexOf(student.name) + 1;
 
-        const studentNumber =
-          studentOrder.indexOf(student.name) + 1;
+        const studentTag = document.createElement("span");
 
+        studentTag.className = "overview-student-tag";
 
-        const studentTag =
-          document.createElement("span");
-
-        studentTag.className =
-          "overview-student-tag";
-
-
-        studentTag.textContent =
-          `${studentNumber}번 ${student.name}`;
-
+        studentTag.textContent = `${studentNumber}번 ${student.name}`;
 
         studentBox.appendChild(studentTag);
-
       });
-
 
       jobBox.appendChild(studentBox);
 
       areaCard.appendChild(jobBox);
-
     });
 
-
     areaGrid.appendChild(areaCard);
-
   });
 
 }
