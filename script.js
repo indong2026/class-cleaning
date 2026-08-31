@@ -1201,8 +1201,6 @@ async function confirmAssignment() {
 
     confirmResultBtn.textContent = "✅ 배정 완료";
 
-    currentAssignment = null;
-
   } catch (error) {
     console.error("배정 확정 실패:", error);
 
